@@ -9,7 +9,7 @@ import io.ktor.server.locations.*
 import io.ktor.server.routing.*
 
 fun main() {
-    embeddedServer(Netty, 8080, host = "0.0.0.0", module = Application::module)
+    embeddedServer(Netty, port = System.getenv("PORT").toInt(), host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 
