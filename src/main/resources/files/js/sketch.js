@@ -73,9 +73,11 @@ function train() {
 function gotResults(error, result) {
     if (error) {
         console.error(error);
-    } else {
+    } else if (result[0].confidence * 100 > 90) {
         label = result[0].label + " " + nf(result[0].confidence * 100, 2, 2) + "%";
         classifier.classify(gotResults);
+    } else {
+        label = "";
     }
 }
 
@@ -93,12 +95,18 @@ async function start(name) {
     started = false;
 }
 
+function checkVerified() {
+    return label !== "";
+
+}
+
 function login() {
     const XHR = new XMLHttpRequest();
     const FD = new FormData();
 
     var data = {name: document.getElementById("name").value,
-                password: document.getElementById("password").value};
+                password: document.getElementById("password").value,
+                verified: checkVerified()};
 
     // Push our data into our FormData object
     for (const [name, value] of Object.entries(data)) {
@@ -126,6 +134,10 @@ function reg() {
     const XHR = new XMLHttpRequest();
     const FD = new FormData();
 
+    const data = {UUID: crypto.randomUUID(),
+                  name: document.getElementById("nam").value,
+                  password: document.getElementById("pasw")};
+
     // Push our data into our FormData object
     for (const [name, value] of Object.entries(data)) {
         FD.append(name, value);
@@ -146,8 +158,4 @@ function reg() {
 
     // Send our FormData object; HTTP headers are set automatically
     XHR.send(FD);
-}
-
-function sendData(data) {
-
 }
