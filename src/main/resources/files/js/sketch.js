@@ -89,10 +89,10 @@ async function start(name) {
         await sleepNow(1000);
         addImg(name);
         m -= (width * (3/5) / 20)
+        if (m < 1) {started = false;}
     }
     await sleepNow(10 * 1000);
     setTimeout(train(), 25 * 1000)
-    started = false;
 }
 
 function checkVerified() {
