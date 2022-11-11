@@ -1,4 +1,4 @@
-var video, classifier, mobilenet;
+var video, classifier, mobilenet, label;
 
 function setup() {
     var cnv = createCanvas(480, 360);
@@ -11,9 +11,19 @@ function setup() {
     classifier = mobilenet.classification(video);
 }
 
-function onresize() {
-    //todo: make size of video resize
+function windowResized() {
+    var a, b = 0;
+    if (windowWidth/4 < windowHeight/3) {
+        a = windowWidth/4;
+        b = (a/4) * 3
+    } else {
+        b = windowHeight/3;
+        a = b/3 * 4;
+    }
+    resizeCanvas(a, b);
 }
+
+var i = 0;
 
 function draw() {
     background(0);
@@ -23,13 +33,20 @@ function draw() {
     scale(-1, 1);
     image(video, 0, 0)
     pop();
+
+    i++;
+    if (i == 20) {
+        console.log(label);
+    }
 }
 
 function addImg(name) {
+    console.log("image added")
     classifier.addImage(name.value);
 }
 
 function train() {
+    console.log("Training");
     classifier.train(loss => {
         if (loss != null) {
             console.log(loss);
@@ -47,4 +64,18 @@ function gotResults(error, result) {
         label = result[0].label + " " + nf(result[0].confidence * 100, 2, 2) + "%";
         classifier.classify(gotResults);
     }
+}
+
+
+const sleepNow = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+
+async function start(name) {
+    alert("Page will stop responding for a while. Do not worry");
+    rect(width * (1/5), height/2 - 10, width * (3/5), 20)
+    for (var i = 0; i < 20; i++) {
+        await sleepNow(1000);
+        addImg(name);
+    }
+    await sleepNow(10 * 1000);
+    setTimeout(train(), 25 * 1000)
 }
