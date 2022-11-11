@@ -11,6 +11,10 @@ function setup() {
     classifier = mobilenet.classification(video);
 }
 
+function onresize() {
+    //todo: make size of video resize
+}
+
 function draw() {
     background(0);
 
@@ -19,4 +23,28 @@ function draw() {
     scale(-1, 1);
     image(video, 0, 0)
     pop();
+}
+
+function addImg(name) {
+    classifier.addImage(name.value);
+}
+
+function train() {
+    classifier.train(loss => {
+        if (loss != null) {
+            console.log(loss);
+        } else {
+            console.log("Training Complete!")
+            classifier.classify(gotResults);
+        }
+    });
+}
+
+function gotResults(error, result) {
+    if (error) {
+        console.error(error);
+    } else {
+        label = result[0].label + " " + nf(result[0].confidence * 100, 2, 2) + "%";
+        classifier.classify(gotResults);
+    }
 }
