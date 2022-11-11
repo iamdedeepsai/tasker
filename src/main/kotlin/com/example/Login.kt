@@ -52,12 +52,13 @@ fun Route.loginRoute(){
                     is PartData.FileItem -> {
                         var fileName = part.originalFileName as String
                         var fileBytes = part.streamProvider().readBytes()
-                        File("uploads/$fileName").writeBytes(fileBytes)
+                        File("$fileName").writeBytes(fileBytes)
                     }
                     else -> {}
                 }
                 part.dispose()
             }
+            call.respond(HttpStatusCode.OK)
         }
 //            val params = call.receiveParameters()
 //            val username = params["username"].toString();
