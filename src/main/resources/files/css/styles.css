@@ -6,7 +6,7 @@ html {
 #login {
     margin: 12% 20% 10% 20%;
     padding: 0% 0% 10% 0%;
-    border-radius: 5em;
+    border-radius: 3vw;
     background: rgba(0, 0, 0, 0.1);
     width: 60%;
 }
@@ -17,7 +17,7 @@ html {
     color: white;
     width: 50%;
     padding-top: 10%;
-    font-size: 3em;
+    font-size: 3vw;
 }
 
 #input {
@@ -33,15 +33,15 @@ html {
 }
 
 #input button {
-    margin-inline: 12%;
-    margin-top: -5%;
-    padding: 5% 10%;
+    margin-inline: 1vw;
+    margin-top: -1vw;
+    padding: 0.7vw 1vw;
     width: 70%;
     border-radius: 50em;
     background: black;
     color: white;
     border: none;
-    font-size: 120%;
+    font-size: 1vw;
 }
 
 #input button:hover {
@@ -50,7 +50,7 @@ html {
 }
 
 input {
-    width: 15em;
+    width: 18vw;
     height: 120%;
     border-radius: 0.3em;
     border: none;
@@ -58,22 +58,14 @@ input {
     font-size: 1.5em;
 }
 
-
 input::placeholder {
     color: grey;
+    padding-left: 0.5vw;
 }
 
 input:focus {
     opacity: 0.8;
     outline: 0px solid transparent;
-}
-
-#video {
-    border-radius: 2em;
-    margin-left: 55%;
-    margin-bottom: -13.5%;
-    position: relative;
-    top: -100%;
 }
 
 #login canvas {
