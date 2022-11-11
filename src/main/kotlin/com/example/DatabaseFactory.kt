@@ -1,14 +1,12 @@
 package com.example
 
+import com.example.models.Tasks
 import com.example.models.User
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.Query
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
@@ -18,6 +16,9 @@ object DatabaseFactory {
     private val password = System.getenv("JDBC_DATABASE_PASSWORD")
     init {
         Database.connect(hikari())
+        transaction {
+            SchemaUtils.createMissingTablesAndColumns(User, Tasks)
+        }
     }
     private fun hikari(): HikariDataSource{
         val config = HikariConfig()
