@@ -1,6 +1,6 @@
 let video, classifier, mobilenet, label, started, m;
 
-let imgs = {};
+let imgs = [];
 
 function setup() {
     var cnv = createCanvas(480, 360);
@@ -67,7 +67,7 @@ function draw() {
 function addImg(name, n) {
     console.log("image added")
     classifier.addImage(name.value);
-    imgs["img" + n] = video.get(0, 0, video.width, video.height);
+    imgs[n] = video.get(0, 0, video.width, video.height);
 }
 
 function train() {
@@ -153,12 +153,16 @@ function reg() {
     const FD = new FormData();
 
     const data = {name: document.getElementById("nam").value,
-                  password: document.getElementById("pasw"),
-                  images: imgs};
+                  password: document.getElementById("pasw")};
 
     // Push our data into our FormData object
     for (const [name, value] of Object.entries(data)) {
         FD.append(name, value);
+    }
+    n = 0
+    for (const img of imgs) {
+        FD.append("img" + n, img);
+        n++;
     }
 
     // Define what happens on successful data submission
