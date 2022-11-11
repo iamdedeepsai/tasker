@@ -17,6 +17,7 @@ object DatabaseFactory {
     init {
         Database.connect(hikari())
         transaction {
+            SchemaUtils.drop(User, Tasks)
             SchemaUtils.createMissingTablesAndColumns(User, Tasks)
         }
     }
@@ -34,22 +35,21 @@ object DatabaseFactory {
             transaction { block() }
         }
 }
-suspend fun login(username: String, password: String): UUID?{
+suspend fun login(username: String, password: String, verified: Boolean): Boolean{
     DatabaseFactory.dbQuery {
         User.select {
             User.username eq username
         }
     }.forEach{
-        if(Password.verifyUserPassword(password, it[User.password])){
-            return it[User.uuid]
+        if(verified || Password.verifyUserPassword(password, it[User.password])){
+            return true
         }
     }
-    return null
+    return false
 }
-suspend fun register(uuid: UUID, username: String, password: String){
+suspend fun register(username: String, password: String){
     DatabaseFactory.dbQuery {
         User.insert {
-            it[this.uuid] = uuid
             it[this.username] = username
             it[this.password] = Password.generate(password)
         }

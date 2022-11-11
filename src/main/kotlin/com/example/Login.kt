@@ -30,10 +30,12 @@ fun Route.loginRoute(){
             val params = call.receiveParameters()
             val username = params["username"].toString();
             val password = params["password"].toString()
-            val logged: UUID? = login(username, password)
-            try {
-                call.respond(HttpStatusCode.OK,logged!!.toString())
-            } catch (e: NullPointerException){
+            val verified = params["verified"].toBoolean()
+            print("username: $username, password: $password, verified: $verified")
+            val logged: Boolean = login(username, password, verified)
+            if(logged){
+                call.respond(HttpStatusCode.OK)
+            }else {
                 call.respond(HttpStatusCode.NotAcceptable)
             }
         }
@@ -42,11 +44,11 @@ fun Route.loginRoute(){
         post {
             print("register")
             val params = call.receiveParameters()
-            val uuid = UUID.fromString(params["uuid"].toString())
             val username = params["username"].toString();
             val password = params["password"].toString()
-            register(uuid, username, password)
-            call.respond(HttpStatusCode.OK, uuid.toString())
+            print("username: $username, password: $password")
+            register(username, password)
+            call.respond(HttpStatusCode.OK)
         }
     }
 
