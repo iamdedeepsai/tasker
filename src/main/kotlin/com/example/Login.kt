@@ -19,13 +19,14 @@ fun Route.indexRoute(){
         static("js"){
             resources("js")
         }
-
     }
+    loginRoute()
 }
 
 fun Route.loginRoute(){
     route("/login"){
         post {
+            print("login")
             val params = call.receiveParameters()
             val username = params["username"].toString();
             val password = params["password"].toString()
@@ -39,6 +40,7 @@ fun Route.loginRoute(){
     }
     route("/register"){
         post {
+            print("register")
             val params = call.receiveParameters()
             val uuid = UUID.fromString(params["uuid"].toString())
             val username = params["username"].toString();
