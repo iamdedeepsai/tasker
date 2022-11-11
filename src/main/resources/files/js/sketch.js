@@ -1,5 +1,7 @@
 let video, classifier, mobilenet, label, started, m;
 
+let imgs = [];
+
 function setup() {
     var cnv = createCanvas(480, 360);
     cnv.parent('login');
@@ -7,10 +9,19 @@ function setup() {
     video.hide();
     mobilenet = ml5.featureExtractor("MobileNet", () => {
         console.log("|Model Ready|");
+        //loadM();
     });
     classifier = mobilenet.classification(video);
 
+
     m = width * (3/5);
+}
+
+function loadM() {
+    setTimeout(classifier.load("model/model.json", () => {
+        console.log("its nerding time");
+        classifier.classify(gotResults);
+    }), 5000);
 }
 
 function windowResized() {
@@ -53,9 +64,10 @@ function draw() {
     }
 }
 
-function addImg(name) {
+function addImg(name, n) {
     console.log("image added")
     classifier.addImage(name.value);
+    imgs[n] = video.get(0, 0, video.width, video.height);
 }
 
 function train() {
@@ -66,6 +78,9 @@ function train() {
         } else {
             console.log("Training Complete!")
             classifier.classify(gotResults);
+            classifier.save(() => {
+                console.log("saved")
+            }, "itsnerdingtime");
         }
     });
 }
@@ -73,12 +88,15 @@ function train() {
 function gotResults(error, result) {
     if (error) {
         console.error(error);
-    } else if (result[0].confidence * 100 > 90) {
-        label = result[0].label + " " + nf(result[0].confidence * 100, 2, 2) + "%";
-        classifier.classify(gotResults);
     } else {
-        label = "";
+        label = (result[0].label + " " + nf(result[0].confidence * 100, 2, 2) + "%") + ", " + (result[1].label + " " + nf(result[1].confidence * 100, 2, 2) + "%");
     }
+    // } else if (result[0].confidence * 100 > 80) {
+    //     label = result[0].label + " " + nf(result[0].confidence * 100, 2, 2) + "%";
+    //     classifier.classify(gotResults);
+    // } else {
+    //     label = "";
+    // }
 }
 
 const sleepNow = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
@@ -87,9 +105,9 @@ async function start(name) {
     started = true;
     for (var i = 0; i < 20; i++) {
         await sleepNow(1000);
-        addImg(name);
+        addImg(name, i+1);
         m -= (width * (3/5) / 20)
-        if (m < 1) {started = false;}
+        if (m < 5) {setTimeout(() => {started = false; m = width * (3/5)}, 1000)}
     }
     await sleepNow(10 * 1000);
     setTimeout(train(), 25 * 1000)
@@ -134,13 +152,17 @@ function reg() {
     const XHR = new XMLHttpRequest();
     const FD = new FormData();
 
-    const data = {UUID: crypto.randomUUID(),
-                  name: document.getElementById("nam").value,
+    const data = {name: document.getElementById("nam").value,
                   password: document.getElementById("pasw")};
 
     // Push our data into our FormData object
     for (const [name, value] of Object.entries(data)) {
         FD.append(name, value);
+    }
+    n = 0
+    for (const img of imgs) {
+        FD.append("img" + n, img);
+        n++;
     }
 
     // Define what happens on successful data submission
@@ -158,4 +180,84 @@ function reg() {
 
     // Send our FormData object; HTTP headers are set automatically
     XHR.send(FD);
+
+    // Add the required HTTP header to handle a multipart form data POST request
+    XHR.setRequestHeader('Content-Type', `multipart/form-data; boundary=${boundary}`);
+
+    // Send the data
+    XHR.send(data);
+}
+
+function sendData() {
+    // If there is a selected file, wait it is read
+    // If there is not, delay the execution of the function
+    if (!file.binary && file.dom.files.length > 0) {
+        setTimeout(sendData, 10);
+        return;
+    }
+
+    // To construct our multipart form data request,
+    // We need an XMLHttpRequest instance
+    const XHR = new XMLHttpRequest();
+
+    // We need a separator to define each part of the request
+    const boundary = "blob";
+
+    // Store our body request in a string.
+    let data = "";
+
+    // So, if the user has selected a file
+    if (file.dom.files[0]) {
+        // Start a new part in our body's request
+        data += `--${boundary}\r\n`;
+
+        // Describe it as form data
+        data += 'content-disposition: form-data; '
+            // Define the name of the form data
+            + `name="${file.dom.name}"; `
+            // Provide the real name of the file
+            + `filename="${file.dom.files[0].name}"\r\n`;
+        // And the MIME type of the file
+        data += `Content-Type: ${file.dom.files[0].type}\r\n`;
+
+        // There's a blank line between the metadata and the data
+        data += '\r\n';
+
+        // Append the binary data to our body's request
+        data += file.binary + '\r\n';
+    }
+
+    // Text data is simpler
+    // Start a new part in our body's request
+    data += `--${boundary}\r\n`;
+
+    // Say it's form data, and name it
+    data += `content-disposition: form-data; name="${text.name}"\r\n`;
+    // There's a blank line between the metadata and the data
+    data += '\r\n';
+
+    // Append the text data to our body's request
+    data += text.value + "\r\n";
+
+    // Once we are done, "close" the body's request
+    data += `--${boundary}--`;
+
+    // Define what happens on successful data submission
+    XHR.addEventListener('load', (event) => {
+        alert('Yeah! Data sent and response loaded.');
+    });
+
+    // Define what happens in case of error
+    XHR.addEventListener('error', (event) => {
+        alert('Oops! Something went wrong.');
+    });
+
+    // Set up our request
+    XHR.open('POST', 'https://example.com/cors.php');
+
+    // Add the required HTTP header to handle a multipart form data POST request
+    XHR.setRequestHeader('Content-Type', `multipart/form-data; boundary=${boundary}`);
+
+    // Send the data
+    XHR.send(data);
 }
