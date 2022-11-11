@@ -8,6 +8,7 @@ html {
     padding: 0% 0% 10% 0%;
     border-radius: 5em;
     background: rgba(0, 0, 0, 0.1);
+    width: 60%;
 }
 
 #login h1 {
@@ -31,7 +32,7 @@ html {
     grid-area: input;
 }
 
-#login button {
+#input button {
     margin-inline: 12%;
     margin-top: -5%;
     padding: 5% 10%;
@@ -43,7 +44,7 @@ html {
     font-size: 120%;
 }
 
-#login button:hover {
+#input button:hover {
     background-color: white;
     color: black;
 }
@@ -81,3 +82,70 @@ input:focus {
     margin-top: -20%;
     margin-right: 5%;
 }
+
+.log {
+    display: block;
+}
+
+.reg {
+    display: none;
+}
+
+.reg h2 {
+    text-align: center;
+    color: white;
+    width: 50%;
+    padding-top: 10%;
+    font-size: 200%;
+}
+
+#register {
+    display: grid;
+    grid-template-areas: 'header header'
+                         'pasw pasw'
+                         'start start'
+                         'but1 but2';
+    grid-row-gap: 20%;
+    justify-content: center;
+    text-align: center;
+    width: 50%;
+}
+
+#start {
+    border-radius: 5em;
+    border: none;
+    font-size: 120%;
+    padding: 3% 10%;
+}
+
+#start:hover {
+    background-color: rgba(171, 171, 171, 0.59);
+}
+
+.btn {
+    margin-inline: 12%;
+    margin-top: -0%;
+    margin-bottom: -7.5%;
+    padding: 5% 10%;
+    width: 70%;
+    border-radius: 50em;
+    background: black;
+    color: white;
+    border: none;
+    font-size: 120%;
+}
+
+.btn:hover {
+    background-color: white;
+    color: black;
+}
+
+.logbtn {
+    background-color: grey;
+}
+
+.regbtn {
+
+}
+
+
