@@ -8,8 +8,9 @@ import io.ktor.server.http.content.*
 import io.ktor.server.locations.*
 import io.ktor.server.routing.*
 
+var db: Database = Database()
 fun main() {
-    embeddedServer(Netty, port = System.getenv("PORT").toInt(), host = "0.0.0.0", module = Application::module)
+    embeddedServer(Netty, 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 
@@ -20,14 +21,9 @@ fun Application.module() {
 }
 fun Application.configureRouting() {
     routing {
-        static("/"){
-            staticBasePackage = "files"
-            resource("index.html")
-            defaultResource("index.html")
-            static("assets"){
-                resources("css")
-                resources("js")
-            }
-        }
+        indexRoute()
     }
 }
+
+
+
