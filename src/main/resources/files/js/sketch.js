@@ -1,4 +1,4 @@
-var video, classifier, mobilenet, label;
+let video, classifier, mobilenet, label, started, m;
 
 function setup() {
     var cnv = createCanvas(480, 360);
@@ -9,6 +9,8 @@ function setup() {
         console.log("|Model Ready|");
     });
     classifier = mobilenet.classification(video);
+
+    m = width * (3/5);
 }
 
 function windowResized() {
@@ -34,9 +36,20 @@ function draw() {
     image(video, 0, 0)
     pop();
 
+    if (started) {
+        stroke(255);
+        strokeWeight(3);
+        noFill()
+        rect(width * (1/5) - 3, height/2 - 23, width * 3/5 + 6, 46);
+        noStroke();
+        fill(80, 200, 120);
+        rect(width * (1/5), height/2 - 20, width * (3/5) - m , 40);
+    }
+
     i++;
     if (i == 20) {
         console.log(label);
+        i = 0;
     }
 }
 
@@ -66,16 +79,75 @@ function gotResults(error, result) {
     }
 }
 
-
 const sleepNow = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
 
 async function start(name) {
-    alert("Page will stop responding for a while. Do not worry");
-    rect(width * (1/5), height/2 - 10, width * (3/5), 20)
+    started = true;
     for (var i = 0; i < 20; i++) {
         await sleepNow(1000);
         addImg(name);
+        m -= (width * (3/5) / 20)
     }
     await sleepNow(10 * 1000);
     setTimeout(train(), 25 * 1000)
+    started = false;
+}
+
+function login() {
+    const XHR = new XMLHttpRequest();
+    const FD = new FormData();
+
+    var data = {name: document.getElementById("name").value,
+                password: document.getElementById("password").value};
+
+    // Push our data into our FormData object
+    for (const [name, value] of Object.entries(data)) {
+        FD.append(name, value);
+    }
+
+    // Define what happens on successful data submission
+    XHR.addEventListener('load', (event) => {
+        alert('Yeah! Data sent and response loaded.');
+    });
+
+    // Define what happens in case of error
+    XHR.addEventListener('error', (event) => {
+        alert('Oops! Something went wrong.');
+    });
+
+    // Set up our request
+    XHR.open('POST', 'https://tasker-nushhack.herokuapp.com/login');
+
+    // Send our FormData object; HTTP headers are set automatically
+    XHR.send(FD);
+}
+
+function reg() {
+    const XHR = new XMLHttpRequest();
+    const FD = new FormData();
+
+    // Push our data into our FormData object
+    for (const [name, value] of Object.entries(data)) {
+        FD.append(name, value);
+    }
+
+    // Define what happens on successful data submission
+    XHR.addEventListener('load', (event) => {
+        alert('Yeah! Data sent and response loaded.');
+    });
+
+    // Define what happens in case of error
+    XHR.addEventListener('error', (event) => {
+        alert('Oops! Something went wrong.');
+    });
+
+    // Set up our request
+    XHR.open('POST', 'https://tasker-nushhack.herokuapp.com/register');
+
+    // Send our FormData object; HTTP headers are set automatically
+    XHR.send(FD);
+}
+
+function sendData(data) {
+
 }
