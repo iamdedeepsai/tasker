@@ -1,8 +1,10 @@
 package com.example
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.*
 
@@ -27,7 +29,12 @@ fun Route.loginRoute(){
             val params = call.receiveParameters()
             val username = params["username"].toString();
             val password = params["password"].toString()
-            login(username, password)
+            val logged: UUID? = login(username, password)
+            try {
+                call.respond(HttpStatusCode.OK,logged!!.toString())
+            } catch (e: NullPointerException){
+                call.respond(HttpStatusCode.NotAcceptable)
+            }
         }
     }
     route("/register"){
@@ -37,6 +44,7 @@ fun Route.loginRoute(){
             val username = params["username"].toString();
             val password = params["password"].toString()
             register(uuid, username, password)
+            call.respond(HttpStatusCode.OK, uuid.toString())
         }
     }
 
