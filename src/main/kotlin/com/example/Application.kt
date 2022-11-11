@@ -21,6 +21,7 @@ fun Application.module() {
 fun Application.configureRouting() {
     routing {
         indexRoute()
+        homeRoute()
     }
 }
 

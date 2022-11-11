@@ -18,7 +18,7 @@ object DatabaseFactory {
         Database.connect(hikari())
         transaction {
             SchemaUtils.drop(User, Tasks)
-            SchemaUtils.createMissingTablesAndColumns(User, Tasks)
+            SchemaUtils.create(User, Tasks)
         }
     }
     private fun hikari(): HikariDataSource{
