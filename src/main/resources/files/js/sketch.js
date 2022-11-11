@@ -2,7 +2,7 @@ var video, classifier, mobilenet;
 
 function setup() {
     var cnv = createCanvas(480, 360);
-    cnv.position(950, 320);
+    cnv.parent('login');
     video = createCapture(VIDEO);
     video.hide();
     mobilenet = ml5.featureExtractor("MobileNet", () => {

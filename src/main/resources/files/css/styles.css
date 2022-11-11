@@ -4,7 +4,6 @@ html {
 }
 
 #login {
-    display: grid;
     margin: 12% 20% 10% 20%;
     padding: 0% 0% 10% 0%;
     border-radius: 5em;
@@ -13,7 +12,6 @@ html {
 
 #login h1 {
     font-family: "Arial Black";
-    width: fit-content;
     text-align: center;
     color: white;
     width: 50%;
@@ -24,19 +22,41 @@ html {
 #input {
     margin-top: 3%;
     display: grid;
-    grid-row-gap: 100%;
+    grid-template-areas: 'name name'
+                         'pw pw'
+                         'but1 but2';
+    grid-row-gap: 80%;
     justify-content: center;
     width: 50%;
+    grid-area: input;
+}
+
+#login button {
+    margin-inline: 12%;
+    margin-top: -5%;
+    padding: 5% 10%;
+    width: 70%;
+    border-radius: 50em;
+    background: black;
+    color: white;
+    border: none;
+    font-size: 120%;
+}
+
+#login button:hover {
+    background-color: white;
+    color: black;
 }
 
 input {
     width: 15em;
-    height: 130%;
+    height: 120%;
     border-radius: 0.3em;
     border: none;
     background-color: rgba(255, 255, 255, 0.7);
     font-size: 1.5em;
 }
+
 
 input::placeholder {
     color: grey;
@@ -44,6 +64,7 @@ input::placeholder {
 
 input:focus {
     opacity: 0.8;
+    outline: 0px solid transparent;
 }
 
 #video {
@@ -54,6 +75,9 @@ input:focus {
     top: -100%;
 }
 
-canvas {
+#login canvas {
     border-radius: 4em;
+    float: right;
+    margin-top: -20%;
+    margin-right: 5%;
 }

@@ -5,8 +5,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.3.1/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.3.1/addons/p5.sound.min.js"></script>
     <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/styles.css"/>
-    <script src="js/index.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css"/>
+    <script src="index.js"></script>
     <title>Slack but better</title>
 </head>
 <body>
@@ -14,12 +14,14 @@
     <div id="login">
         <h1><b>Login</b></h1>
         <div id="input">
-            <input placeholder="Enter name" type="text">
-            <input placeholder="Enter password" type="password">
+            <input placeholder="Enter name" type="text" style="grid-area: name">
+            <input placeholder="Enter password" type="password" style="grid-area: pw">
+            <button style="grid-area: but1">Login</button>
+            <button style="grid-area: but2">Register</button>
         </div>
 
-        <!--<video id="video" width="400" autoplay></video>-->
-        <script src="js/sketch.js"></script>
+        <!--<video id="video" width="400" autoplay style="grid-area: cam"></video>-->
+        <script src="sketch.js"></script>
     </div>
 
 </body>
