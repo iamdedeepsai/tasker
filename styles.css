@@ -1,0 +1,55 @@
+html {
+    height: 100%;
+    background: linear-gradient(140deg, rgba(53, 198, 243, 1) 0%, rgba(255, 71, 193, 1) 100%) no-repeat;
+}
+
+#login {
+    display: grid;
+    margin: 10% 20%;
+    padding: 0% 0% 10% 0%;
+    border-radius: 5em;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+#login h1 {
+    font-family: "Arial Black";
+    width: fit-content;
+    text-align: center;
+    color: white;
+    width: 50%;
+    padding-top: 10%;
+    font-size: 3em;
+}
+
+#input {
+    margin-top: 3%;
+    display: grid;
+    grid-row-gap: 100%;
+    justify-content: center;
+    width: 50%;
+}
+
+input {
+    width: 15em;
+    height: 130%;
+    border-radius: 0.3em;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.7);
+    font-size: 1.5em;
+}
+
+input::placeholder {
+    color: grey;
+}
+
+input:focus {
+    opacity: 0.8;
+}
+
+#video {
+    border-radius: 2em;
+    margin-left: 55%;
+    margin-bottom: -13.5%;
+    position: relative;
+    top: -100%;
+}
