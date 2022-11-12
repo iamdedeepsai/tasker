@@ -38,9 +38,10 @@ fun Route.loginRoute(){
             print("username: $username, password: $password, verified: $verified")
             val logged: Boolean = login(username, password, verified)
             if(logged){
-                call.respond(HttpStatusCode.OK)
+                clockin(username)
+                call.respond(HttpStatusCode.OK, "Valid")
             }else {
-                call.respond(HttpStatusCode.Forbidden)
+                call.respond(HttpStatusCode.OK, "Invalid")
             }
         }
     }
@@ -55,6 +56,14 @@ fun Route.loginRoute(){
             } else {
                 call.respond(HttpStatusCode.NotAcceptable)
             }
+            call.respond(HttpStatusCode.OK)
+        }
+    }
+    route("/logout"){
+        post {
+            val params = call.receiveParameters()
+            val username = params["username"].toString();
+            clockout(username)
             call.respond(HttpStatusCode.OK)
         }
     }

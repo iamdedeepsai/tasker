@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.models.Clocking
 import com.example.models.Task
 import com.example.models.Tasks
 import com.example.models.User
@@ -8,7 +9,9 @@ import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.statements.DeleteStatement.Companion.where
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 
 object DatabaseFactory {
     private val jdbcUrl = System.getenv("JDBC_DATABASE_URL")
@@ -17,8 +20,7 @@ object DatabaseFactory {
     init {
         Database.connect(hikari())
         transaction {
-            SchemaUtils.drop(User, Tasks)
-            SchemaUtils.create(User, Tasks)
+            SchemaUtils.createMissingTablesAndColumns(User, Tasks, Clocking)
         }
     }
     private fun hikari(): HikariDataSource{
@@ -73,4 +75,18 @@ suspend fun getTasks(username: String): MutableList<Task> {
         arr.add(Task(it[Tasks.username], it[Tasks.title], it[Tasks.description], it[Tasks.date]))
     }
     return arr
+}
+suspend fun clockin(username: String){ 
+    DatabaseFactory.dbQuery { 
+        Clocking.update({Clocking.username eq username}) {
+            it[Clocking.clockin] = DateTime(CurrentDateTime())
+        }
+    }
+}
+suspend fun clockout(username: String){
+    DatabaseFactory.dbQuery {
+        Clocking.update({Clocking.username eq username}) {
+            it[Clocking.clockout] = DateTime(CurrentDateTime())
+        }
+    }
 }
