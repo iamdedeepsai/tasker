@@ -40,33 +40,22 @@ fun Route.loginRoute(){
             if(logged){
                 call.respond(HttpStatusCode.OK)
             }else {
-                call.respond(HttpStatusCode.NotAcceptable)
+                call.respond(HttpStatusCode.Forbidden)
             }
         }
     }
     route("/register"){
         post {
-            val multipartData = call.receiveMultipart()
-            multipartData.forEachPart { part ->
-                when (part) {
-                    is PartData.FileItem -> {
-                        var fileName = part.originalFileName as String
-                        var fileBytes = part.streamProvider().readBytes()
-                        File("$fileName").writeBytes(fileBytes)
-                    }
-                    else -> {}
-                }
-                part.dispose()
+            val params = call.receiveParameters()
+            val username = params["username"].toString();
+            val password = params["password"].toString()
+            print("username: $username, password: $password")
+            if(register(username, password)){
+                call.respond(HttpStatusCode.OK)
+            } else {
+                call.respond(HttpStatusCode.NotAcceptable)
             }
             call.respond(HttpStatusCode.OK)
         }
-//            val params = call.receiveParameters()
-//            val username = params["username"].toString();
-//            val password = params["password"].toString()
-//            val images = params["images"]
-//            print("username: $username, password: $password")
-//            register(username, password)
-//            call.respond(HttpStatusCode.OK)
     }
-
 }
