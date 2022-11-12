@@ -1,16 +1,19 @@
 package com.example
 
+import com.example.models.Clocking
+import com.example.models.Task
+import com.example.models.Tasks
 import com.example.models.User
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.Query
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.statements.DeleteStatement.Companion.where
+import org.jetbrains.exposed.sql.javatime.CurrentDate
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.*
+import org.joda.time.DateTime
 
 object DatabaseFactory {
     private val jdbcUrl = System.getenv("JDBC_DATABASE_URL")
@@ -18,6 +21,9 @@ object DatabaseFactory {
     private val password = System.getenv("JDBC_DATABASE_PASSWORD")
     init {
         Database.connect(hikari())
+        transaction {
+            SchemaUtils.createMissingTablesAndColumns(User, Tasks, Clocking)
+        }
     }
     private fun hikari(): HikariDataSource{
         val config = HikariConfig()
@@ -33,24 +39,59 @@ object DatabaseFactory {
             transaction { block() }
         }
 }
-suspend fun login(username: String, password: String): UUID?{
+suspend fun login(username: String, password: String, verified: Boolean): Boolean{
     DatabaseFactory.dbQuery {
         User.select {
             User.username eq username
         }
-    }.forEach{
-        if(Password.verifyUserPassword(password, it[User.password])){
-            return it[User.uuid]
+    }.forEach {
+        if(verified || Password.verifyUserPassword(password, it[User.password])){
+            print("verified: $verified")
+            return true
         }
     }
-    return null
+    return false
 }
-suspend fun register(uuid: UUID, username: String, password: String){
+suspend fun register(username: String, password: String): Boolean{
+    return try {
+        DatabaseFactory.dbQuery {
+            User.insert {
+                it[this.username] = username
+                it[this.password] = Password.generate(password)
+            }
+        }
+        true
+    } catch (e: Exception) {
+        false
+    }
+}
+suspend fun getTasks(username: String): MutableList<Task> {
+    val arr = mutableListOf<Task>()
     DatabaseFactory.dbQuery {
-        User.insert {
-            it[this.uuid] = uuid
-            it[this.username] = username
-            it[this.password] = Password.generate(password)
+        Tasks.select {
+            Tasks.username eq username
+            Tasks.date eq CurrentDateTime().toString()
+        }
+    }.forEach {
+        print(it[Tasks.username] + "" + it[Tasks.description] +  it[Tasks.date] + "" + CurrentDateTime().toString())
+        arr.add(Task(it[Tasks.username], it[Tasks.description], it[Tasks.date]))
+    }
+    return arr
+}
+suspend fun clockin(username: String){ 
+    DatabaseFactory.dbQuery {
+        Clocking.insert {
+            it[Clocking.username] = username
+            it[Clocking.clockin] = DateTime(CurrentDateTime())
+            it[Clocking.clockout] = DateTime()
+            it[Clocking.date] = DateTime(CurrentDate)
+        }
+    }
+}
+suspend fun clockout(username: String){
+    DatabaseFactory.dbQuery {
+        Clocking.update({Clocking.username eq username}) {
+            it[Clocking.clockout] = DateTime(CurrentDateTime())
         }
     }
 }

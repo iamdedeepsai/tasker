@@ -39,6 +39,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation("org.jetbrains.exposed:exposed:0.17.14")
-    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("org.jetbrains.exposed:exposed-java-time:0.40.1")
+    implementation("com.zaxxer:HikariCP:2.7.8")
     implementation("org.postgresql:postgresql:42.5.0")
 }
