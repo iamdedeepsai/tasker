@@ -5,10 +5,9 @@ function newTask() {
 var tasks = [];
 
 function submit() {
-    document.getElementById('popup').style.display = 'none';
-    if (document.getElementById('description').value === "" || document.getElementById('date').value === "") {
 
-    }
+    document.getElementById('popup').style.display = 'none';
+
     tasks.push({
         name: document.getElementById('name').value,
         description: document.getElementById('description').value,
@@ -39,4 +38,6 @@ function submit() {
     // Send our FormData object; HTTP headers are set automatically
     XHR.send(FD);
 }
+
+
 

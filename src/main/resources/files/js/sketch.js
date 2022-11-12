@@ -83,9 +83,9 @@ function train() {
         } else {
             console.log("Training Complete!")
             classifier.classify(gotResults);
-            classifier.save(() => {
-                console.log("saved")
-            }, "itsnerdingtime");
+            // classifier.save(() => {
+            //     console.log("saved")
+            // }, "itsnerdingtime");
         }
     });
 }
@@ -116,7 +116,7 @@ async function start(name) {
 }
 
 function checkVerified() {
-    return label.length() > 1;
+    return label.length > 1;
 }
 
 function login() {
