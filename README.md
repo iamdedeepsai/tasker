@@ -1,5 +1,6 @@
 # Tasker
 A central application for the modern workspace - empowering you to collaborate and track your coworkers and employees despite the barriers of remote work. 
+Tasker enables you to clock into your workplace with secure facial recognition and receive and delegate tasks on our platform with your coworkers.
 
 ## How to Use 
 Visit https://tasker-nushhack.herokuapp.com
