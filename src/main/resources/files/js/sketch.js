@@ -144,11 +144,19 @@ function login() {
                 case "Valid":
                     window.location.href = "home.html";
                     document.cookie = "username=" + document.getElementById('name').value;
+                    break;
                 case "Invalid":
+                    alert("Invalid password or username!");
+                    break;
                     //customAlert.alert("Wrong password or username!" , "Incorrect!");
             }
         }
     }
+
+    // Define what happens on successful data submission
+    XHR.addEventListener('load', (event) => {
+        alert('Yeah! Data sent and response loaded.');
+    });
 
     // Set up our request
     XHR.open('POST', 'https://tasker-nushhack.herokuapp.com/login');
