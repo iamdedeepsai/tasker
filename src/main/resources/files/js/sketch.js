@@ -1,5 +1,5 @@
 let video, classifier, mobilenet, label, started, m;
-let s = 1;
+let s = 0.9;
 
 let imgs = {};
 
@@ -116,10 +116,16 @@ async function start(name) {
 }
 
 function checkVerified() {
-    return label.length > 1;
+    return label.length() > 1;
 }
 
 function login() {
+    let customAlert = new CustomAlert();
+
+    if (document.getElementById("name").value === "" || document.getElementById('password').value === "") {
+        //customAlert.alert("Fill in both blanks!", "Warning");
+    }
+
     const XHR = new XMLHttpRequest();
     const FD = new FormData();
 
@@ -132,15 +138,17 @@ function login() {
         FD.append(name, value);
     }
 
-    // Define what happens on successful data submission
-    XHR.addEventListener('load', (event) => {
-        alert('Yeah! Data sent and response loaded.');
-    });
-
-    // Define what happens in case of error
-    XHR.addEventListener('error', (event) => {
-        alert('Oops! Something went wrong.');
-    });
+    XHR.onreadystatechange = function () {
+        if(this.readyState === 4 && this.status === 200){
+            switch(XHR.response.text){
+                case "Valid":
+                    window.location.href = "home.html";
+                    document.cookie = "username=" + document.getElementById('name').value;
+                case "Invalid":
+                    //customAlert.alert("Wrong password or username!" , "Incorrect!");
+            }
+        }
+    }
 
     // Set up our request
     XHR.open('POST', 'https://tasker-nushhack.herokuapp.com/login');
@@ -176,35 +184,6 @@ function reg() {
 
     // Send our FormData object; HTTP headers are set automatically
     XHR.send(FD);
-    // Send the data
-    XHR.send(data);
-}
-
-function sendData() {
-    // If there is a selected file, wait it is read
-    // If there is not, delay the execution of the function
-    if (!file.binary && file.dom.files.length > 0) {
-        setTimeout(sendData, 10);
-        return;
-    }
-
-    // To construct our multipart form data request,
-    // We need an XMLHttpRequest instance
-    const XHR = new XMLHttpRequest();
-
-    // Define what happens on successful data submission
-    XHR.addEventListener('load', (event) => {
-        alert('Yeah! Data sent and response loaded.');
-    });
-
-    // Define what happens in case of error
-    XHR.addEventListener('error', (event) => {
-        alert('Oops! Something went wrong.');
-    });
-
-    // Set up our request
-    XHR.open('POST', 'https://example.com/cors.php');
-
     // Send the data
     XHR.send(data);
 }
