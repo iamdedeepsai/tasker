@@ -1,6 +1,7 @@
 let video, classifier, mobilenet, label, started, m;
+let s = 1;
 
-let imgs = [];
+let imgs = {};
 
 function setup() {
     var cnv = createCanvas(480, 360);
@@ -28,11 +29,13 @@ function windowResized() {
     var a, b = 0;
     if (windowWidth/4 < windowHeight/3) {
         a = windowWidth/4;
-        b = (a/4) * 3
+        b = (a/4) * 4
     } else {
         b = windowHeight/3;
-        a = b/3 * 4;
+        a = b/3 * 5;
     }
+
+    s = a / 480;
     resizeCanvas(a, b);
 }
 
@@ -43,7 +46,7 @@ function draw() {
 
     push();
     translate(width, 0);
-    scale(-1, 1);
+    scale(-s, s);
     image(video, 0, 0)
     pop();
 
@@ -66,8 +69,10 @@ function draw() {
 
 function addImg(name, n) {
     console.log("image added")
-    classifier.addImage(name.value);
-    imgs[n] = video.get(0, 0, video.width, video.height);
+    classifier.addImage(name.value)
+    if (imgs[name.value] == null) {imgs[name.value] = []};
+    imgs[name.value].push(video.get(0, 0, video.width, video.height));
+    classifier.addImage(video.get(0, 0, video.width, video.height), name.value);
 }
 
 function train() {
@@ -88,15 +93,12 @@ function train() {
 function gotResults(error, result) {
     if (error) {
         console.error(error);
+    } else if (result[0].confidence * 100 > 80) {
+        label = result[0].label + " " + nf(result[0].confidence * 100, 2, 2) + "%";
+        classifier.classify(gotResults);
     } else {
-        label = (result[0].label + " " + nf(result[0].confidence * 100, 2, 2) + "%") + ", " + (result[1].label + " " + nf(result[1].confidence * 100, 2, 2) + "%");
+        label = "";
     }
-    // } else if (result[0].confidence * 100 > 80) {
-    //     label = result[0].label + " " + nf(result[0].confidence * 100, 2, 2) + "%";
-    //     classifier.classify(gotResults);
-    // } else {
-    //     label = "";
-    // }
 }
 
 const sleepNow = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
@@ -110,12 +112,11 @@ async function start(name) {
         if (m < 5) {setTimeout(() => {started = false; m = width * (3/5)}, 1000)}
     }
     await sleepNow(10 * 1000);
-    setTimeout(train(), 25 * 1000)
+    setTimeout(train(), 25 * 1000);
 }
 
 function checkVerified() {
-    return label !== "";
-
+    return label.length > 1;
 }
 
 function login() {
@@ -159,11 +160,6 @@ function reg() {
     for (const [name, value] of Object.entries(data)) {
         FD.append(name, value);
     }
-    n = 0
-    for (const img of imgs) {
-        FD.append("img" + n, img);
-        n++;
-    }
 
     // Define what happens on successful data submission
     XHR.addEventListener('load', (event) => {
@@ -180,10 +176,6 @@ function reg() {
 
     // Send our FormData object; HTTP headers are set automatically
     XHR.send(FD);
-
-    // Add the required HTTP header to handle a multipart form data POST request
-    XHR.setRequestHeader('Content-Type', `multipart/form-data; boundary=${boundary}`);
-
     // Send the data
     XHR.send(data);
 }
@@ -200,48 +192,6 @@ function sendData() {
     // We need an XMLHttpRequest instance
     const XHR = new XMLHttpRequest();
 
-    // We need a separator to define each part of the request
-    const boundary = "blob";
-
-    // Store our body request in a string.
-    let data = "";
-
-    // So, if the user has selected a file
-    if (file.dom.files[0]) {
-        // Start a new part in our body's request
-        data += `--${boundary}\r\n`;
-
-        // Describe it as form data
-        data += 'content-disposition: form-data; '
-            // Define the name of the form data
-            + `name="${file.dom.name}"; `
-            // Provide the real name of the file
-            + `filename="${file.dom.files[0].name}"\r\n`;
-        // And the MIME type of the file
-        data += `Content-Type: ${file.dom.files[0].type}\r\n`;
-
-        // There's a blank line between the metadata and the data
-        data += '\r\n';
-
-        // Append the binary data to our body's request
-        data += file.binary + '\r\n';
-    }
-
-    // Text data is simpler
-    // Start a new part in our body's request
-    data += `--${boundary}\r\n`;
-
-    // Say it's form data, and name it
-    data += `content-disposition: form-data; name="${text.name}"\r\n`;
-    // There's a blank line between the metadata and the data
-    data += '\r\n';
-
-    // Append the text data to our body's request
-    data += text.value + "\r\n";
-
-    // Once we are done, "close" the body's request
-    data += `--${boundary}--`;
-
     // Define what happens on successful data submission
     XHR.addEventListener('load', (event) => {
         alert('Yeah! Data sent and response loaded.');
@@ -254,9 +204,6 @@ function sendData() {
 
     // Set up our request
     XHR.open('POST', 'https://example.com/cors.php');
-
-    // Add the required HTTP header to handle a multipart form data POST request
-    XHR.setRequestHeader('Content-Type', `multipart/form-data; boundary=${boundary}`);
 
     // Send the data
     XHR.send(data);

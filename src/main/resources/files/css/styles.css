@@ -1,6 +1,7 @@
 html {
     height: 100%;
     background: linear-gradient(140deg, rgba(53, 198, 243, 1) 0%, rgba(255, 71, 193, 1) 100%) no-repeat;
+    font-family: "JetBrains Mono", monospace;
 }
 
 #login {
@@ -11,8 +12,7 @@ html {
     width: 60%;
 }
 
-#login h1 {
-    font-family: "Arial Black";
+#login h1 {;
     text-align: center;
     color: white;
     width: 50%;

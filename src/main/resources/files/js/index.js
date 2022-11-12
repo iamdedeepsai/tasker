@@ -38,3 +38,5 @@ function toLog() {
         cols[i].style.display = 'grid';
     }
 }
+
+
