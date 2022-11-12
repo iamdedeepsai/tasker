@@ -122,9 +122,9 @@ function checkVerified() {
 function login() {
     let customAlert = new CustomAlert();
 
-    if (document.getElementById("name").value === "" || document.getElementById('password').value === "") {
-        //customAlert.alert("Fill in both blanks!", "Warning");
-    }
+    // if (document.getElementById("name").value === "" || document.getElementById('password').value === "") {
+    //     //customAlert.alert("Fill in both blanks!", "Warning");
+    // }
 
     const XHR = new XMLHttpRequest();
     const FD = new FormData();
