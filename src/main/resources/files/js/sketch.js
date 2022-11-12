@@ -130,7 +130,7 @@ function login() {
     const XHR = new XMLHttpRequest();
     const FD = new FormData();
 
-    var data = {name: document.getElementById("name").value,
+    var data = {username: document.getElementById("name").value,
                 password: document.getElementById("password").value,
                 verified: checkVerified()};
 
