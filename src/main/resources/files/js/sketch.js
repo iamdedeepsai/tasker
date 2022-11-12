@@ -1,6 +1,6 @@
 let video, classifier, mobilenet, label, started, m;
 let s = 0.9;
-
+label = "";
 let imgs = {};
 
 function setup() {
@@ -76,6 +76,7 @@ function addImg(name, n) {
 }
 
 function train() {
+
     console.log("Training");
     classifier.train(loss => {
         if (loss != null) {
@@ -120,7 +121,7 @@ function checkVerified() {
 }
 
 function login() {
-    let customAlert = new CustomAlert();
+    // let customAlert = new CustomAlert();
 
     // if (document.getElementById("name").value === "" || document.getElementById('password').value === "") {
     //     //customAlert.alert("Fill in both blanks!", "Warning");
