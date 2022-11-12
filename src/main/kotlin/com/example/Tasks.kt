@@ -37,10 +37,9 @@ fun Route.homeRoute(){
             post("/add") {
                 val params = call.receiveParameters()
                 val username = params["username"].toString()
-                val title = params["title"].toString()
                 val description = params["description"].toString()
-                val date = DateTime(CurrentDateTime())
-                if(addTask(username, title, description, date)){
+                val date = DateTime(CurrentDateTime()).toString()
+                if(addTask(username, description, date)){
                     call.respond(HttpStatusCode.OK)
                 } else {
                     call.respond(HttpStatusCode.NotAcceptable)
@@ -49,10 +48,9 @@ fun Route.homeRoute(){
             post("/remove") {
                 val params = call.receiveParameters()
                 val username = params["username"].toString()
-                val title = params["title"].toString()
                 val description = params["description"].toString()
-                val date = DateTime(CurrentDateTime())
-                if(removeTask(username, title, description, date)){
+                val date = params["date"].toString()
+                if(removeTask(username, description, date)){
                     call.respond(HttpStatusCode.OK)
                 } else {
                     call.respond(HttpStatusCode.NotAcceptable)
@@ -62,14 +60,13 @@ fun Route.homeRoute(){
     }
 }
 
-suspend fun addTask(username: String, title: String, description: String, date: DateTime): Boolean{
+suspend fun addTask(username: String, description: String, date: String): Boolean{
     return try {
         DatabaseFactory.dbQuery {
             Tasks.insert{
                 it[this.username] = username
-                it[this.title] = title
                 it[this.description] = description
-                it[this.date] = date.toString()
+                it[this.date] = date
             }
         }
         true
@@ -77,14 +74,13 @@ suspend fun addTask(username: String, title: String, description: String, date: 
         false
     }
 }
-suspend fun removeTask(username: String, title: String, description: String, date: DateTime): Boolean{
+suspend fun removeTask(username: String, description: String, date: String): Boolean{
     return try {
         DatabaseFactory.dbQuery {
             Tasks.deleteWhere {
                 Tasks.username eq username
-                Tasks.title eq title
                 Tasks.description eq description
-                Tasks.date eq date.toString()
+                Tasks.date eq date
             }
         }
         true

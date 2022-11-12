@@ -9,7 +9,9 @@ import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.statements.DeleteStatement.Companion.where
+import org.jetbrains.exposed.sql.javatime.CurrentDate
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
@@ -71,15 +73,18 @@ suspend fun getTasks(username: String): MutableList<Task> {
             Tasks.date eq CurrentDateTime().toString()
         }
     }.forEach {
-        print(it[Tasks.username] + "" + it[Tasks.title] + "" + it[Tasks.description] +  it[Tasks.date] + "" + CurrentDateTime().toString())
-        arr.add(Task(it[Tasks.username], it[Tasks.title], it[Tasks.description], it[Tasks.date]))
+        print(it[Tasks.username] + "" + it[Tasks.description] +  it[Tasks.date] + "" + CurrentDateTime().toString())
+        arr.add(Task(it[Tasks.username], it[Tasks.description], it[Tasks.date]))
     }
     return arr
 }
 suspend fun clockin(username: String){ 
-    DatabaseFactory.dbQuery { 
-        Clocking.update({Clocking.username eq username}) {
+    DatabaseFactory.dbQuery {
+        Clocking.insert {
+            it[Clocking.username] = username
             it[Clocking.clockin] = DateTime(CurrentDateTime())
+            it[Clocking.clockout] = DateTime()
+            it[Clocking.date] = DateTime(CurrentDate)
         }
     }
 }
